@@ -1,11 +1,17 @@
 import os
-import GIS_functions as gf
 import numpy as np
-import matplotlib as plt
-import pandas as pd
-from pathlib import Path
+import tifffile
 
-x = gf.list_files_in_folder('\Data\Clipped images', extension='tif')
+dirname = r"Data\\Clipped_images\\"
+final = []
+
+for fname in os.listdir(dirname):
+    im = tifffile.imread(os.path.join(dirname, fname))
+    imarray = np.array(im)
+    final.append(imarray)
+
+final = np.asarray(final)
+
 
 
 
