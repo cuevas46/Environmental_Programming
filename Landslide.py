@@ -12,11 +12,13 @@ import datetime
 CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
 FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
 
+##Listing Filenames
+
 # folder path
 dir_path = CDataDir
 
 # list to store files
-res = []
+res = list()
 
 # Iterate directory
 for item in os.listdir(dir_path):
@@ -26,41 +28,45 @@ for item in os.listdir(dir_path):
 
 print(res)
 
+#Sorting independent picture into lists
 BI = list()
 NDMI = list()
 NDVI = list()
 BI_Date = list()
-NDMI_Date =list()
+NDMI_Date = list()
 NDVI_Date = list()
 for i in range (0, len(res)):
     temp_list = res[i].split('_')
     if temp_list[1] == 'BI':
         BI.append(res[i])
-        BI_Date.append((temp_list[2].split("."))[0])
+        BI_Date.append((temp_list[2].split("."))[0]) #Here you split and take index 0, which is the date.
+        #This is the same thing that was done for the temp_list, but just in one line
     elif temp_list[1] == 'NDMI':
         NDMI.append(res[i])
         NDMI_Date.append(temp_list[2].split(".")[0])
     elif temp_list[1] == 'NDVI':
         NDVI.append(res[i])
         NDVI_Date.append(temp_list[2].split(".")[0])
-print(NDMI_Date)
 print(BI_Date)
+print(NDMI_Date)
 print(NDVI_Date)
-#
-# year =
-# month
-#
-# avg_bi = list()
-# for i in range (0,len(BI)):
-#     ds = gdal.Open(CDataDir+'/'+BI[i])
-#     band = ds.GetRasterBand(1)
-#     no_data = band.GetNoDataValue()
-#     array = band.ReadAsArray()
-#     mean = np.mean(array[array > no_data])
-#     avg_bi.append(mean)
-#
-# print(avg_bi)
-#
+
+#BI is the list with all the Bi files
+#This can be transform into a function
+avg_bi = list()
+for i in range (0,len(BI)):
+    ds = gdal.Open(CDataDir+'/'+BI[i]) #We are openning all the Bi files in the directory
+    band = ds.GetRasterBand(1) #to access the information store in our data set
+    no_data = band.GetNoDataValue()
+    array = band.ReadAsArray() #We will read the band object into this array
+    mean = np.mean(array[array > no_data])
+    avg_bi.append(mean)
+# print(no_data)
+# print(array)
+# plt.figure()
+# plt.imshow(array)
+print(avg_bi)
+
 # avg_ndmi = list()
 # for i in range (0,len(NDMI)):
 #     ds1 = gdal.Open(CDataDir+'/'+NDMI[i])

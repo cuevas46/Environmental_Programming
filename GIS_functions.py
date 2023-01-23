@@ -472,4 +472,7 @@ def map_pixel_area_km(fih, approximate_lengths=False):
     if approximate_lengths:
         pixel_approximation = np.sqrt(abs(geot[1]) * abs(geot[5]))
         map_area = np.sqrt(map_area) / pixel_approximation
-    return map_area    
+    return map_area
+
+
+#ClippedDataFiles = gf.list_files_in_folder(CDataDir, extension='tif')
