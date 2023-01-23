@@ -59,35 +59,34 @@ for i in range (0,len(BI)):
     band = ds.GetRasterBand(1) #to access the information store in our data set
     no_data = band.GetNoDataValue()
     array = band.ReadAsArray() #We will read the band object into this array
-    mean = np.mean(array[array > no_data])
-    avg_bi.append(mean)
-# print(no_data)
-# print(array)
-# plt.figure()
-# plt.imshow(array)
+    # plt.imshow(array)
+    # plt.show()
+    #print(array[array>no_data])
+    mean_bi = np.mean(array[array > no_data])
+    avg_bi.append(mean_bi)
 print(avg_bi)
 
-# avg_ndmi = list()
-# for i in range (0,len(NDMI)):
-#     ds1 = gdal.Open(CDataDir+'/'+NDMI[i])
-#     band1 = ds1.GetRasterBand(1)
-#     no_data1 = band1.GetNoDataValue()
-#     array1 = band1.ReadAsArray()
-#     mean1 = np.mean(array1[array1 > no_data])
-#     avg_ndmi.append(mean1)
-#
-# print(avg_ndmi)
-#
-# avg_ndvi = list()
-# for i in range (0,len(NDVI)):
-#     ds = gdal.Open(CDataDir+'/'+NDVI[i])
-#     band = ds.GetRasterBand(1)
-#     no_data = band.GetNoDataValue()
-#     array = band.ReadAsArray()
-#     mean = np.mean(array[array > no_data])
-#     avg_ndvi.append(mean)
-#
-# print(avg_ndvi)
+avg_ndmi = list()
+for i in range (0,len(NDMI)):
+    ds1 = gdal.Open(CDataDir+'/'+NDMI[i])
+    band1 = ds1.GetRasterBand(1)
+    no_data1 = band1.GetNoDataValue()
+    array1 = band1.ReadAsArray()
+    mean_ndmi = np.mean(array1[array1 > no_data])
+    avg_ndmi.append(mean_ndmi)
+
+print(avg_ndmi)
+
+avg_ndvi = list()
+for i in range (0,len(NDVI)):
+    ds = gdal.Open(CDataDir+'/'+NDVI[i])
+    band = ds.GetRasterBand(1)
+    no_data = band.GetNoDataValue()
+    array = band.ReadAsArray()
+    mean_ndvi = np.mean(array[array > no_data])
+    avg_ndvi.append(mean_ndvi)
+
+print(avg_ndvi)
 #
 # dates = BI_Date + NDMI_Date + NDVI_Date
 # dates
