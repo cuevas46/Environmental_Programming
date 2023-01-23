@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 from osgeo import gdal
 import sys
 import os
-# print(sys.path)
-# sys.path.append('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection')
 import GIS_functions as gf
 import datetime
 
@@ -26,7 +24,7 @@ for item in os.listdir(dir_path):
     if os.path.isfile(os.path.join(dir_path, item)):
         res.append(item)
 
-print(res)
+# print(res)
 
 #Sorting independent picture into lists
 BI = list()
@@ -47,9 +45,9 @@ for i in range (0, len(res)):
     elif temp_list[1] == 'NDVI':
         NDVI.append(res[i])
         NDVI_Date.append(temp_list[2].split(".")[0])
-print(BI_Date)
-print(NDMI_Date)
-print(NDVI_Date)
+# print(BI_Date)
+# print(NDMI_Date)
+# print(NDVI_Date)
 
 #BI is the list with all the Bi files
 #This can be transform into a function
@@ -75,7 +73,7 @@ for i in range (0,len(NDMI)):
     mean_ndmi = np.mean(array1[array1 > no_data])
     avg_ndmi.append(mean_ndmi)
 
-print(avg_ndmi)
+# print(avg_ndmi)
 
 avg_ndvi = list()
 for i in range (0,len(NDVI)):
@@ -86,23 +84,28 @@ for i in range (0,len(NDVI)):
     mean_ndvi = np.mean(array[array > no_data])
     avg_ndvi.append(mean_ndvi)
 
-print(avg_ndvi)
+# print(avg_ndvi)
 #
-# dates = BI_Date + NDMI_Date + NDVI_Date
-# dates
-# Day =list()
-# Month =list()
-# Year =list()
-# for i in range (0, (len(dates)-1)):
-#     Year.append(dates[i][0:4])
-#     Month.append(dates[i][4:6])
-#     Day.append(dates[i][6:8])
-#
-# date_form = list()
-# for i in range (0,len(dates)-1):
-#     date = str(datetime.date(int(Year[i]),int(Month[i]),int(Day[i])))
-#     date_form.append(date)
-#
-# date_form
-#
-# pd.dataframe
+dates = BI_Date
+dates
+Day =list()
+Month =list()
+Year =list()
+for i in range (0, (len(dates))):
+    Year.append(dates[i][0:4])
+    Month.append(dates[i][4:6])
+    Day.append(dates[i][6:8])
+
+date_form = list()
+for i in range (0,len(dates)):
+    date = str(datetime.date(int(Year[i]),int(Month[i]),int(Day[i])))
+    date_form.append(date)
+
+print(date_form)
+# plt.imshow(array)
+# plt.show()
+plt.plot(date_form, avg_bi)
+plt.show()
+
+#Point 6 onwards
+full_images = gf.list_files_in_folder(FDataDir, extension='tif')
