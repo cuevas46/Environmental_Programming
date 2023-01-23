@@ -4,7 +4,8 @@ import matplotlib.pyplot as plt
 from osgeo import gdal
 import sys
 import os
-sys.path.append('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection')
+# print(sys.path)
+# sys.path.append('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection')
 import GIS_functions as gf
 import datetime
 
@@ -18,33 +19,33 @@ dir_path = CDataDir
 res = []
 
 # Iterate directory
-for path in os.listdir(dir_path):
-    # check if current path is a file
-    if os.path.isfile(os.path.join(dir_path, path)):
-        res.append(path)
+for item in os.listdir(dir_path):
+    # Accessing item by adding directory path and checking if current item is a file
+    if os.path.isfile(os.path.join(dir_path, item)):
+        res.append(item)
 
 print(res)
-#
-# BI = list()
-# NDMI = list()
-# NDVI = list()
-# BI_Date = list()
-# NDMI_Date =list()
-# NDVI_Date = list()
-# for i in range (0, len(res)):
-#     temp_list = res[i].split('_')
-#     if temp_list[1] == 'BI':
-#         BI.append(res[i])
-#         BI_Date.append((temp_list[2].split("."))[0])
-#     elif temp_list[1] == 'NDMI':
-#         NDMI.append(res[i])
-#         NDMI_Date.append(temp_list[2].split(".")[0])
-#     elif temp_list[1] == 'NDVI':
-#         NDVI.append(res[i])
-#         NDVI_Date.append(temp_list[2].split(".")[0])
-# print(NDMI_Date)
-# print(BI_Date)
-# print(NDVI_Date)
+
+BI = list()
+NDMI = list()
+NDVI = list()
+BI_Date = list()
+NDMI_Date =list()
+NDVI_Date = list()
+for i in range (0, len(res)):
+    temp_list = res[i].split('_')
+    if temp_list[1] == 'BI':
+        BI.append(res[i])
+        BI_Date.append((temp_list[2].split("."))[0])
+    elif temp_list[1] == 'NDMI':
+        NDMI.append(res[i])
+        NDMI_Date.append(temp_list[2].split(".")[0])
+    elif temp_list[1] == 'NDVI':
+        NDVI.append(res[i])
+        NDVI_Date.append(temp_list[2].split(".")[0])
+print(NDMI_Date)
+print(BI_Date)
+print(NDVI_Date)
 #
 # year =
 # month
