@@ -14,9 +14,11 @@ FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Lands
 
 # folder path
 dir_path = CDataDir
+# dir_pathF = FDataDir
 
 # list to store files
 res = list()
+# resF = list()
 
 # Iterate directory
 for item in os.listdir(dir_path):
@@ -24,9 +26,9 @@ for item in os.listdir(dir_path):
     if os.path.isfile(os.path.join(dir_path, item)):
         res.append(item)
 
-# print(res)
-
-#Sorting independent picture into lists
+#print(res)
+#
+# #Sorting independent picture into lists
 BI = list()
 NDMI = list()
 NDVI = list()
@@ -62,7 +64,7 @@ for i in range (0,len(BI)):
     #print(array[array>no_data])
     mean_bi = np.mean(array[array > no_data])
     avg_bi.append(mean_bi)
-print(avg_bi)
+# print(avg_bi)
 
 avg_ndmi = list()
 for i in range (0,len(NDMI)):
@@ -85,27 +87,34 @@ for i in range (0,len(NDVI)):
     avg_ndvi.append(mean_ndvi)
 
 # print(avg_ndvi)
-#
-dates = BI_Date
-dates
+
+dates = BI_Date + NDMI_Date + NDVI_Date
+# dates
 Day =list()
 Month =list()
 Year =list()
-for i in range (0, (len(dates))):
+for i in range (0, (len(dates))): #Ali has a -1
     Year.append(dates[i][0:4])
     Month.append(dates[i][4:6])
     Day.append(dates[i][6:8])
 
 date_form = list()
-for i in range (0,len(dates)):
+for i in range (0,len(dates)): #Ali has a -1
     date = str(datetime.date(int(Year[i]),int(Month[i]),int(Day[i])))
     date_form.append(date)
-
-print(date_form)
+#
+date_form1= date_form.sort() #To sort in order the dates
+# print(date_form)
 # plt.imshow(array)
 # plt.show()
-plt.plot(date_form, avg_bi)
-plt.show()
+# plt.figure()
+# plt.plot(date_form, avg_bi/max((avg_bi)), label='Avergae BI') #normalized BI
+# plt.plot(date_form,avg_ndvi, label='Avergae ndvi')
+# plt.plot(date_form,avg_ndmi, label='Avergae ndmi')
+# plt.legend(loc='best')
+# plt.show()
+#
+# #Point 6 onwards
+# # full_images = gf.list_files_in_folder(FDataDir, extension='tif')
 
-#Point 6 onwards
-full_images = gf.list_files_in_folder(FDataDir, extension='tif')
+
