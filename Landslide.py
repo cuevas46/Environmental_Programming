@@ -104,39 +104,32 @@ def Event_pointer(Listname):
     Date_of_Event = CSV.Date[CSV.Average == Event_Average]
     return Date_of_Event
 
-# print(Event_pointer(BI_Average))
-# print(Event_pointer(NDVI_Average))
-# print(Event_pointer(NDMI_Average))
-
-# def Plotting(xaxis, yaxis):
-#     fig, ax = plt.subplots()
-#     ax.set_title(str(xaxis) + 'Time Series')
-#     ax.set_ylabel('yaxis')
-#     ax.set_xlabel('xaxis')
-#     ax.plot(xaxis,yaxis)
-#     plt.show()
-# Plotting(Dates,BI_Average )
-
 BI_Average =(CSV.Average[CSV.Index == "BI"]).tolist()
 NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
 NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
-
 Dates =(CSV.Date[0:12]).tolist()
-# print(Dates)
 
+print(Event_pointer(BI_Average))
+print(Event_pointer(NDVI_Average))
+print(Event_pointer(NDMI_Average))
+
+# PLotting
 plt.rcParams["figure.figsize"] = (20,10)
 plt.figure()
-plt.plot(Dates, BI_Average) #normalized BI
+plt.plot(Dates, BI_Average)
 plt.xlabel("Dates")
-plt.ylabel("BI")
-plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/BI_timeseries.png', dpi = 600)
+plt.ylabel("Average BI")
+plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/BI_timeseries.jpg', dpi = 600)
 plt.figure()
-plt.plot(Dates, NDMI_Average') #normalized BI
+plt.plot(Dates, NDMI_Average)
 plt.xlabel("Dates")
-plt.ylabel("NDMI")
-plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDMI_timeseries.png', dpi = 600)
+plt.ylabel("Average NDMI")
+plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDMI_timeseries.jpg', dpi = 600)
 plt.figure()
-plt.plot(Dates, NDVI_Average) #normalized BI
+plt.plot(Dates, NDVI_Average)
 plt.xlabel("Dates")
-plt.ylabel("NDVI")
-plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.png', dpi = 600)
+plt.ylabel("Average NDVI")
+plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.jpg', dpi = 600)
+
+#Exporting
+CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeries.xlsx")
