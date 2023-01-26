@@ -10,9 +10,7 @@ import datetime
 CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
 FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
 
-#Listing Filenames
-
-# folder path
+# Folder path
 dir_path = CDataDir
 dir_pathF = FDataDir
 
@@ -31,7 +29,6 @@ for item in os.listdir(dir_pathF):
     # Accessing item by adding directory path and checking if current item is a file
     if os.path.isfile(os.path.join(dir_pathF, item)):
         resF.append(item)
-
 # print(resF)
 
 def Index( filename , datatype ): #You have to select wether the file is clipped or full
@@ -65,7 +62,7 @@ def Average_Index_Value(filename, datatype):
         band = ds.GetRasterBand(1)
         no_data = band.GetNoDataValue()
         array = band.ReadAsArray()
-        mean = np.mean(array[array != no_data])
+        mean = np.nanmean(array)
     return mean
 
 def No_Data_Value(filename, datatype):
@@ -85,7 +82,7 @@ li3 = [i for i in range(len(resF))]
 CSV = pd.DataFrame( index = li2,
                    columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
 CSVF = pd.DataFrame( index = li3,
-                   columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
+                   columns = ["filename" , "Index", "Date","NoDataValue",'Average',"Event"])
 for i in range (0, len(res)):
     filename = res[i]
     CSV.filename[i] = filename
@@ -103,51 +100,29 @@ for i in range (0, len(resF)):
     CSVF.Average[i] = Average_Index_Value(filename, "Full")
 
 
-
-print(CSVF)
-print(CSV)
-def Event_pointer(Listname):
+def Event_pointer(Listname, df):
     Derivative = list() #We create here the list where all the derivatives will be stored
     for i in range (0,(len(Listname) - 1)):
         Mean_Distance = abs(Listname[i+1] - Listname[i])
         Derivative.append(Mean_Distance)
     index_in_list = max(Derivative)
-    Event = Derivative.index(index_in_list) +1
+    Event = Derivative.index(index_in_list) + 1
     Event_Average = Listname[Event]
-    Date_of_Event = CSV.Date[CSV.Average == Event_Average]
-    Index = CSV[CSV['Average'] == Event_Average].index.values
-    CSV.loc[Index, 'Event'] = 'LS'
+    #Date_of_Event = CSV.Date[CSV.Average == Event_Average]
+    Index = df[df['Average'] == Event_Average].index.values
+    df.loc[Index, 'Event'] = 'LS'
+    Date_of_Event = df['Date'].values[Index]
+    CSVF.loc[CSVF['Date'] == df['Date'].loc[df.index[Index[0]]], 'Event'] = 'LS'
     return Date_of_Event
-#Basados en el event de las clipped images, debo rellenar el dataframe de las full images
-#pero primero debo dividir
 
+
+#Teh averga wont work, we neeed to get the index value or date value in another way.
 BI_Average =(CSV.Average[CSV.Index == "BI"]).tolist()
-NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
-NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
+# NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
+# NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
 # Dates =(CSV.Date[0:12]).tolist()
-# print(BI_Average)
-#Like open all the files in the carpet that have the name of the string before Event = event
-#First we need to load the event into the dataframe
-# print(Event_pointer(BI_Average))
-# print(Event_pointer(NDVI_Average))
-# print(Event_pointer(NDMI_Average))
 
-
-# I need all the files previous to the date to be in one part, I need to assign an index to the event based on the list
-#Is it possible to access the files from the data frame?
-
-##
-# for i in resF:
-#     ds = gdal.Open(FDataDir+'/'+ i)
-#     band = ds.GetRasterBand(1)
-#     no_data = band.GetNoDataValue()
-#     array = band.ReadAsArray()
-#     array[np.isnan(array)] = 0
-#     array +=array
-# final_image = array/len(resF)
-# plt.imshow(final_image)
-# plt.show()
-##
+print(Event_pointer(BI_Average, CSV))
 
 # # PLotting
 # plt.rcParams["figure.figsize"] = (20,10)
@@ -168,5 +143,6 @@ NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
 # plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.jpg', dpi = 600)
 #
 # #Exporting
-# CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeries.xlsx")
+# CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesC.xlsx")
+# CSVF.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesF.xlsx")
 
