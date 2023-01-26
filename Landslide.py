@@ -18,7 +18,7 @@ dir_pathF = FDataDir
 
 # lists to store files
 res = list()
-# resF = list()
+resF = list()
 
 # Iterate directories
 for item in os.listdir(dir_path):
@@ -27,10 +27,12 @@ for item in os.listdir(dir_path):
         res.append(item)
 # print(res)
 
-# for item in os.listdir(dir_pathF):
-#     # Accessing item by adding directory path and checking if current item is a file
-#     if os.path.isfile(os.path.join(dir_pathF, item)):
-#         resF.append(item)
+for item in os.listdir(dir_pathF):
+    # Accessing item by adding directory path and checking if current item is a file
+    if os.path.isfile(os.path.join(dir_pathF, item)):
+        resF.append(item)
+
+# print(resF)
 
 def Index( filename , datatype ): #You have to select wether the file is clipped or full
     if datatype == "Clipped":
@@ -78,9 +80,11 @@ def No_Data_Value(filename, datatype):
     return no_data
 
 li2 = [i for i in range(len(res))]
-# li3 = [i for i in range(len(resF))]
+li3 = [i for i in range(len(resF))]
 
 CSV = pd.DataFrame( index = li2,
+                   columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
+CSVF = pd.DataFrame( index = li3,
                    columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
 for i in range (0, len(res)):
     filename = res[i]
@@ -89,10 +93,19 @@ for i in range (0, len(res)):
     CSV.Date[i] = Date(filename, "Clipped")
     CSV.NoDataValue[i] = No_Data_Value(filename, "Clipped")
     CSV.Average[i] = Average_Index_Value(filename, "Clipped")
+#here we are creating the dataframe, we need a separte function for the averaged images.
+for i in range (0, len(resF)):
+    filename = resF[i]
+    CSVF.filename[i] = filename
+    CSVF.Index[i] = Index(filename, "Full")
+    CSVF.Date[i] = Date(filename, "Full")
+    CSVF.NoDataValue[i] = No_Data_Value(filename, "Full")
+    CSVF.Average[i] = Average_Index_Value(filename, "Full")
 
-# CSV.sort_values("Date")
-# print(CSV)
 
+
+print(CSVF)
+print(CSV)
 def Event_pointer(Listname):
     Derivative = list() #We create here the list where all the derivatives will be stored
     for i in range (0,(len(Listname) - 1)):
@@ -102,34 +115,58 @@ def Event_pointer(Listname):
     Event = Derivative.index(index_in_list) +1
     Event_Average = Listname[Event]
     Date_of_Event = CSV.Date[CSV.Average == Event_Average]
+    Index = CSV[CSV['Average'] == Event_Average].index.values
+    CSV.loc[Index, 'Event'] = 'LS'
     return Date_of_Event
+#Basados en el event de las clipped images, debo rellenar el dataframe de las full images
+#pero primero debo dividir
 
 BI_Average =(CSV.Average[CSV.Index == "BI"]).tolist()
 NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
 NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
-Dates =(CSV.Date[0:12]).tolist()
+# Dates =(CSV.Date[0:12]).tolist()
+# print(BI_Average)
+#Like open all the files in the carpet that have the name of the string before Event = event
+#First we need to load the event into the dataframe
+# print(Event_pointer(BI_Average))
+# print(Event_pointer(NDVI_Average))
+# print(Event_pointer(NDMI_Average))
 
-print(Event_pointer(BI_Average))
-print(Event_pointer(NDVI_Average))
-print(Event_pointer(NDMI_Average))
 
-# PLotting
-plt.rcParams["figure.figsize"] = (20,10)
-plt.figure()
-plt.plot(Dates, BI_Average)
-plt.xlabel("Dates")
-plt.ylabel("Average BI")
-plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/BI_timeseries.jpg', dpi = 600)
-plt.figure()
-plt.plot(Dates, NDMI_Average)
-plt.xlabel("Dates")
-plt.ylabel("Average NDMI")
-plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDMI_timeseries.jpg', dpi = 600)
-plt.figure()
-plt.plot(Dates, NDVI_Average)
-plt.xlabel("Dates")
-plt.ylabel("Average NDVI")
-plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.jpg', dpi = 600)
+# I need all the files previous to the date to be in one part, I need to assign an index to the event based on the list
+#Is it possible to access the files from the data frame?
 
-#Exporting
-CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeries.xlsx")
+##
+# for i in resF:
+#     ds = gdal.Open(FDataDir+'/'+ i)
+#     band = ds.GetRasterBand(1)
+#     no_data = band.GetNoDataValue()
+#     array = band.ReadAsArray()
+#     array[np.isnan(array)] = 0
+#     array +=array
+# final_image = array/len(resF)
+# plt.imshow(final_image)
+# plt.show()
+##
+
+# # PLotting
+# plt.rcParams["figure.figsize"] = (20,10)
+# plt.figure()
+# plt.plot(Dates, BI_Average)
+# plt.xlabel("Dates")
+# plt.ylabel("Average BI")
+# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/BI_timeseries.jpg', dpi = 600)
+# plt.figure()
+# plt.plot(Dates, NDMI_Average)
+# plt.xlabel("Dates")
+# plt.ylabel("Average NDMI")
+# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDMI_timeseries.jpg', dpi = 600)
+# plt.figure()
+# plt.plot(Dates, NDVI_Average)
+# plt.xlabel("Dates")
+# plt.ylabel("Average NDVI")
+# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.jpg', dpi = 600)
+#
+# #Exporting
+# CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeries.xlsx")
+
