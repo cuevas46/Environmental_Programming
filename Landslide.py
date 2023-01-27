@@ -7,28 +7,7 @@ import os
 import GIS_functions as gf
 import datetime
 
-CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
-FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
-DataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/'
-
-# Folder path
-dir_path = CDataDir
-dir_pathF = FDataDir
-
-# lists to store files
-res = []
-resF = []
-
-# Iterate directories
-for path in os.listdir(dir_path):
-    # check if current path is a file
-    if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_path, path)):
-        res.append(path)
-
-for path in os.listdir(dir_pathF):
-    # check if current path is a file
-    if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_pathF, path)):
-        resF.append(path)
+##Functions
 
 def Index( filename , datatype ): #You have to select wether the file is clipped or full
     if datatype == "Clipped":
@@ -75,30 +54,6 @@ def No_Data_Value(filename, datatype):
         no_data = band.GetNoDataValue()
     return no_data
 
-li2 = [i for i in range(len(res))]
-li3 = [i for i in range(len(resF))]
-
-CSV = pd.DataFrame( index = li2,
-                   columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
-CSVF = pd.DataFrame( index = li3,
-                   columns = ["filename" , "Index", "Date","NoDataValue",'Average',"Event"])
-for i in range (0, len(res)):
-    filename = res[i]
-    CSV.filename[i] = filename
-    CSV.Index[i] = Index(filename, "Clipped")
-    CSV.Date[i] = Date(filename, "Clipped")
-    CSV.NoDataValue[i] = No_Data_Value(filename, "Clipped")
-    CSV.Average[i] = Average_Index_Value(filename, "Clipped")
-#here we are creating the dataframe, we need a separte function for the averaged images.
-for i in range (0, len(resF)):
-    filename = resF[i]
-    CSVF.filename[i] = filename
-    CSVF.Index[i] = Index(filename, "Full")
-    CSVF.Date[i] = Date(filename, "Full")
-    CSVF.NoDataValue[i] = No_Data_Value(filename, "Full")
-    CSVF.Average[i] = Average_Index_Value(filename, "Full")
-
-
 def Event_pointer(Listname, df):
     Derivative = list() #We create here the list where all the derivatives will be stored
     for i in range (0,(len(Listname) - 1)):
@@ -113,16 +68,6 @@ def Event_pointer(Listname, df):
     Date_of_Event = df['Date'].values[Index]
     CSVF.loc[CSVF['Date'] == df['Date'].loc[df.index[Index[0]]], 'Event'] = 'LS'
     return Date_of_Event
-
-
-BI_Average =(CSV.Average[CSV.Index == "BI"]).tolist()
-NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
-NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
-# Dates =(CSV.Date[0:12]).tolist()
-
-Date_of_LS = Event_pointer(BI_Average, CSV)
-# print(Event_pointer(NDMI_Average, CSV))
-# print(Event_pointer(NDVI_Average, CSV))
 
 def Generate_post_minus_pre_images(filetype):
     df = pd.DataFrame(columns = ["filename", "Date","Event"])
@@ -154,52 +99,81 @@ def Generate_post_minus_pre_images(filetype):
     return post_array, array
 
 
-array = Generate_post_minus_pre_images('BI')[1]
-post_array = Generate_post_minus_pre_images('BI')[0]
-print(array)
-plt.imshow(array)
-plt.show()
-print(post_array)
-plt.imshow(post_array)
-plt.show()
+#Reading of images
+CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
+FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
+DataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/'
 
-pre_image_BI = array
-post_image_BI = post_array
+clipped_images = []
+full_images = []
 
-# Up to here
+for path in os.listdir(CDataDir):
+    # check if current path is a file
+    if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(CDataDir, path)):
+        clipped_images.append(path)
 
-dBI = post_image_BI - pre_image_BI
-plt.imshow(dBI)
-plt.show()
+for path in os.listdir(FDataDir):
+    # check if current path is a file
+    if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(FDataDir, path)):
+        full_images.append(path)
+
+li2 = [i for i in range(len(clipped_images))]
+li3 = [i for i in range(len(full_images))]
+
+CSV = pd.DataFrame( index = li2,
+                   columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
+CSVF = pd.DataFrame( index = li3,
+                   columns = ["filename" , "Index", "Date","Event"])
+
+for i in range (0, len(clipped_images)):
+    filename = clipped_images[i]
+    CSV.filename[i] = filename
+    CSV.Index[i] = Index(filename, "Clipped")
+    CSV.Date[i] = Date(filename, "Clipped")
+    CSV.NoDataValue[i] = No_Data_Value(filename, "Clipped")
+    CSV.Average[i] = Average_Index_Value(filename, "Clipped")
+for i in range (0, len(full_images)):
+    filename = full_images[i]
+    CSVF.filename[i] = filename
+    CSVF.Index[i] = Index(filename, "Full")
+    CSVF.Date[i] = Date(filename, "Full")
+
+BI_Average =(CSV.Average[CSV.Index == "BI"]).tolist()
+NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
+NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
+Dates =(CSV.Date[0:12]).tolist()
+
+if Event_pointer(BI_Average, CSV)[0] == Event_pointer(NDMI_Average, CSV) == Event_pointer(NDVI_Average, CSV):
+    Date_of_LS = Event_pointer(BI_Average, CSV)[0]
+
+pre_array_BI = Generate_post_minus_pre_images('BI')[1]
+post_array_BI = Generate_post_minus_pre_images('BI')[0]
+pre_array_NDMI = Generate_post_minus_pre_images('NDMI')[1]
+post_array_NDMI = Generate_post_minus_pre_images('NDMI')[0]
+pre_array_NDVI = Generate_post_minus_pre_images('NDVI')[1]
+post_array_NDVI = Generate_post_minus_pre_images('NDVI')[0]
+
+dBI = post_array_BI - pre_array_BI
+dNDMI = post_array_NDMI - pre_array_NDMI
+dNDVI = post_array_NDMI - pre_array_NDVI
 
 x=gf.get_geoinfo(FDataDir+'/'+ 'LC08_173060_20190204_BI.tif',subdataset=0)
-gf.create_geotiff(DataDir+'BI2.tif', dBI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
+gf.create_geotiff(DataDir+'BI.tif', dBI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
+gf.create_geotiff(DataDir+'NDMI.tif', dNDMI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
+gf.create_geotiff(DataDir+'NDVI.tif', dNDVI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
 
+# PLotting
+plt.rcParams["figure.figsize"] = (20,10)
+plt.figure()
+plt.plot(Dates, BI_Average/max(BI_Average),label = 'BI', color = 'green')
+plt.plot(Dates, NDMI_Average,label = 'NDMI', color = 'blue')
+plt.plot(Dates, NDVI_Average,label = 'NDVI', color = 'black')
+plt.legend(prop={'size': 20})
+plt.xlabel("Dates", fontsize=20)
+plt.ylabel("Arbitrary Units", fontsize=20)
+plt.axvline(x = Date_of_LS, color = 'r', label = 'axvline - full height')
+plt.savefig(DataDir + 'BI_timeseries.jpg', dpi = 600)
+plt.show()
 
-# BI_F =(CSV.[CSV.Index == "BI"]).tolist()
-# NDMI_F =(CSV[CSV.Index == "NDMI"]).tolist()
-# NDVI_F =(CSV[CSV.Index == "NDVI"]).tolist()
-
-
-# # PLotting
-# plt.rcParams["figure.figsize"] = (20,10)
-# plt.figure()
-# plt.plot(Dates, BI_Average)
-# plt.xlabel("Dates")
-# plt.ylabel("Average BI")
-# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/BI_timeseries.jpg', dpi = 600)
-# plt.figure()
-# plt.plot(Dates, NDMI_Average)
-# plt.xlabel("Dates")
-# plt.ylabel("Average NDMI")
-# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDMI_timeseries.jpg', dpi = 600)
-# plt.figure()
-# plt.plot(Dates, NDVI_Average)
-# plt.xlabel("Dates")
-# plt.ylabel("Average NDVI")
-# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.jpg', dpi = 600)
-#
 # #Exporting
-# CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesC.xlsx")
-# CSVF.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesF.xlsx")
-
+CSV.to_excel(DataDir + 'TimeSeriesC.xlsx')

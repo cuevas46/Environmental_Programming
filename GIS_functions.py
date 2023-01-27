@@ -26,7 +26,7 @@ def get_gdalwarp_info(fih, subdataset=0):
     -------
     srs : str
         The projection of the fih.
-    res : str
+    clipped_images : str
         Resolution of the fih.
     bbox : str
         Bounding box (xmin, ymin, xmax, ymax) of the fih.

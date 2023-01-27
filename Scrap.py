@@ -17,20 +17,20 @@
 # dir_pathF = FDataDir
 # #
 # # # list to store files
-# res = list()
-# resF = list()
+# clipped_images = list()
+# full_images = list()
 # #
 # # Iterate directory
 # for item in os.listdir(dir_path):
 #     # Accessing item by adding directory path and checking if current item is a file
 #     if os.path.isfile(os.path.join(dir_path, item)):
-#         res.append(item)
+#         clipped_images.append(item)
 # for item in os.listdir(dir_pathF):
 #     # Accessing item by adding directory path and checking if current item is a file
 #     if os.path.isfile(os.path.join(dir_pathF, item)):
-#         resF.append(item)
+#         full_images.append(item)
 # #
-# #print(res)
+# #print(clipped_images)
 # #
 # # #Sorting independent picture into lists
 # BI = list()
@@ -39,17 +39,17 @@
 # BI_Date = list()
 # NDMI_Date = list()
 # NDVI_Date = list()
-# for i in range (0, len(res)):
-#     temp_list = res[i].split('_')
+# for i in range (0, len(clipped_images)):
+#     temp_list = clipped_images[i].split('_')
 #     if temp_list[1] == 'BI':
-#         BI.append(res[i])
+#         BI.append(clipped_images[i])
 #         BI_Date.append((temp_list[2].split("."))[0]) #Here you split and take index 0, which is the date.
 #         #This is the same thing that was done for the temp_list, but just in one line
 #     elif temp_list[1] == 'NDMI':
-#         NDMI.append(res[i])
+#         NDMI.append(clipped_images[i])
 #         NDMI_Date.append(temp_list[2].split(".")[0])
 #     elif temp_list[1] == 'NDVI':
-#         NDVI.append(res[i])
+#         NDVI.append(clipped_images[i])
 #         NDVI_Date.append(temp_list[2].split(".")[0])
 # print(BI_Date)
 # print(NDMI_Date)
@@ -141,22 +141,22 @@
 # dir_pathF = FDataDir
 #
 # # lists to store files
-# res = list()
-# resF = list()
+# clipped_images = list()
+# full_images = list()
 #
 # # Iterate directories
 # for item in os.listdir(dir_path):
 #     # Accessing item by adding directory path and checking if current item is a file
 #     if os.path.isfile(os.path.join(dir_path, item)):
-#         res.append(item)
-# # print(res)
+#         clipped_images.append(item)
+# # print(clipped_images)
 #
 # for item in os.listdir(dir_pathF):
 #     # Accessing item by adding directory path and checking if current item is a file
 #     if os.path.isfile(os.path.join(dir_pathF, item)):
-#         resF.append(item)
+#         full_images.append(item)
 #
-# # print(resF)
+# # print(full_images)
 #
 # def Index( filename , datatype ): #You have to select wether the file is clipped or full
 #     if datatype == "Clipped":
@@ -203,23 +203,23 @@
 #         no_data = band.GetNoDataValue()
 #     return no_data
 #
-# li2 = [i for i in range(len(res))]
-# li3 = [i for i in range(len(resF))]
+# li2 = [i for i in range(len(clipped_images))]
+# li3 = [i for i in range(len(full_images))]
 #
 # CSV = pd.DataFrame( index = li2,
 #                    columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
 # CSVF = pd.DataFrame( index = li3,
 #                    columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
-# for i in range (0, len(res)):
-#     filename = res[i]
+# for i in range (0, len(clipped_images)):
+#     filename = clipped_images[i]
 #     CSV.filename[i] = filename
 #     CSV.Index[i] = Index(filename, "Clipped")
 #     CSV.Date[i] = Date(filename, "Clipped")
 #     CSV.NoDataValue[i] = No_Data_Value(filename, "Clipped")
 #     CSV.Average[i] = Average_Index_Value(filename, "Clipped")
 # #here we are creating the dataframe, we need a separte function for the averaged images.
-# for i in range (0, len(resF)):
-#     filename = resF[i]
+# for i in range (0, len(full_images)):
+#     filename = full_images[i]
 #     CSVF.filename[i] = filename
 #     CSVF.Index[i] = Index(filename, "Full")
 #     CSVF.Date[i] = Date(filename, "Full")
@@ -278,14 +278,14 @@
 # #Is it possible to access the files from the data frame?
 #
 # ##
-# # for i in resF:
+# # for i in full_images:
 # #     ds = gdal.Open(FDataDir+'/'+ i)
 # #     band = ds.GetRasterBand(1)
 # #     no_data = band.GetNoDataValue()
 # #     array = band.ReadAsArray()
 # #     array[np.isnan(array)] = 0
 # #     array +=array
-# # final_image = array/len(resF)
+# # final_image = array/len(full_images)
 # # plt.imshow(final_image)
 # # plt.show()
 # ##
@@ -384,19 +384,19 @@
 # dir_pathF = FDataDir
 #
 # # lists to store files
-# res = []
-# resF = []
+# clipped_images = []
+# full_images = []
 #
 # # Iterate directories
 # for path in os.listdir(dir_path):
 #     # check if current path is a file
 #     if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_path, path)):
-#         res.append(path)
+#         clipped_images.append(path)
 #
 # for path in os.listdir(dir_pathF):
 #     # check if current path is a file
 #     if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_pathF, path)):
-#         resF.append(path)
+#         full_images.append(path)
 #
 # def Index( filename , datatype ): #You have to select wether the file is clipped or full
 #     if datatype == "Clipped":
@@ -443,23 +443,23 @@
 #         no_data = band.GetNoDataValue()
 #     return no_data
 #
-# li2 = [i for i in range(len(res))]
-# li3 = [i for i in range(len(resF))]
+# li2 = [i for i in range(len(clipped_images))]
+# li3 = [i for i in range(len(full_images))]
 #
 # CSV = pd.DataFrame( index = li2,
 #                    columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
 # CSVF = pd.DataFrame( index = li3,
 #                    columns = ["filename" , "Index", "Date","NoDataValue",'Average',"Event"])
-# for i in range (0, len(res)):
-#     filename = res[i]
+# for i in range (0, len(clipped_images)):
+#     filename = clipped_images[i]
 #     CSV.filename[i] = filename
 #     CSV.Index[i] = Index(filename, "Clipped")
 #     CSV.Date[i] = Date(filename, "Clipped")
 #     CSV.NoDataValue[i] = No_Data_Value(filename, "Clipped")
 #     CSV.Average[i] = Average_Index_Value(filename, "Clipped")
 # #here we are creating the dataframe, we need a separte function for the averaged images.
-# for i in range (0, len(resF)):
-#     filename = resF[i]
+# for i in range (0, len(full_images)):
+#     filename = full_images[i]
 #     CSVF.filename[i] = filename
 #     CSVF.Index[i] = Index(filename, "Full")
 #     CSVF.Date[i] = Date(filename, "Full")
@@ -570,4 +570,236 @@
 # #Exporting
 # CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesC.xlsx")
 # CSVF.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesF.xlsx")
+
+
+###Alis version
+
+# import pandas as pd
+# import numpy as np
+# import matplotlib.pyplot as plt
+# from osgeo import gdal
+# import sys
+# import os
+# import GIS_functions as gf
+# import datetime
+#
+# CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
+# FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
+# DataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/'
+#
+# # Folder path
+# dir_path = CDataDir
+# dir_pathF = FDataDir
+#
+# # lists to store files
+# clipped_images = []
+# full_images = []
+#
+# # Iterate directories
+# for path in os.listdir(dir_path):
+#     # check if current path is a file
+#     if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_path, path)):
+#         clipped_images.append(path)
+#
+# for path in os.listdir(dir_pathF):
+#     # check if current path is a file
+#     if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_pathF, path)):
+#         full_images.append(path)
+#
+# def Index( filename , datatype ): #You have to select wether the file is clipped or full
+#     if datatype == "Clipped":
+#         index = filename.split("_")[1] #Index is wether is NDMI, BI or NDVI
+#     else:
+#         index = filename.split("_")[3].split(".")[0] #Index is wether is NDMI, BI or NDVI and here we take the figure format out
+#     return index
+#
+# def Date(filename, datatype ):
+#     if datatype == "Clipped":
+#         Day = filename.split(".")[0][-2:]
+#         Month = filename.split(".")[0][-4:-2]
+#         Year = filename.split(".")[0][-8:-4]
+#     else:
+#         Day = filename.split("_")[2][-2:]
+#         Month = filename.split("_")[2][-4:-2]
+#         Year = filename.split("_")[2][0:4]
+#     date = str(datetime.date(int(Year),int(Month),int(Day)))
+#     return date
+#
+# def Average_Index_Value(filename, datatype):
+#     if datatype == "Clipped":
+#         ds = gdal.Open(CDataDir+'/'+filename)
+#         band = ds.GetRasterBand(1)
+#         no_data = band.GetNoDataValue()
+#         array = band.ReadAsArray()
+#         mean = np.mean(array[array > no_data])
+#     else:
+#         ds = gdal.Open(FDataDir+'/'+filename)
+#         band = ds.GetRasterBand(1)
+#         no_data = band.GetNoDataValue()
+#         array = band.ReadAsArray()
+#         mean = np.mean(array[array != no_data])
+#     return mean
+#
+# def No_Data_Value(filename, datatype):
+#     if datatype == "Clipped":
+#         ds = gdal.Open(CDataDir+'/'+filename)
+#         band = ds.GetRasterBand(1)
+#         no_data = band.GetNoDataValue()
+#     else:
+#         ds = gdal.Open(FDataDir+'/'+filename)
+#         band = ds.GetRasterBand(1)
+#         no_data = band.GetNoDataValue()
+#     return no_data
+#
+# li2 = [i for i in range(len(clipped_images))]
+# li3 = [i for i in range(len(full_images))]
+#
+# CSV = pd.DataFrame( index = li2,
+#                    columns = ["filename" , "Index", "Date", "NoDataValue", "Average","Event"])
+# CSVF = pd.DataFrame( index = li3,
+#                    columns = ["filename" , "Index", "Date","NoDataValue",'Average',"Event"])
+# for i in range (0, len(clipped_images)):
+#     filename = clipped_images[i]
+#     CSV.filename[i] = filename
+#     CSV.Index[i] = Index(filename, "Clipped")
+#     CSV.Date[i] = Date(filename, "Clipped")
+#     CSV.NoDataValue[i] = No_Data_Value(filename, "Clipped")
+#     CSV.Average[i] = Average_Index_Value(filename, "Clipped")
+# #here we are creating the dataframe, we need a separte function for the averaged images.
+# for i in range (0, len(full_images)):
+#     filename = full_images[i]
+#     CSVF.filename[i] = filename
+#     CSVF.Index[i] = Index(filename, "Full")
+#     CSVF.Date[i] = Date(filename, "Full")
+#     CSVF.NoDataValue[i] = No_Data_Value(filename, "Full")
+# print(CSVF)
+# CSVF.sort_values("Date")
+# CSV.sort_values("Date")
+#
+# def Event_pointer(my_list):
+#     Derivative = list() #We create here the list where all the derivatives will be stored
+#     for i in range (0,(len(my_list) - 1)):
+#         difference = abs(my_list[i+1][1] - my_list[i][1])
+#         Derivative.append(difference)
+#     index_in_dict = max(Derivative)
+#     Event = Derivative.index(index_in_dict) + 1
+#     Event_Average = my_list[Event][0]
+#     return Event_Average
+# ##############################################################################################
+#
+# #Creation of dictionaries
+#
+# keys = (CSV[CSV.Index == "BI"]["Date"])
+# values = CSV[CSV.Index == "BI"]["Average"]
+#
+# BI_Average = list(zip(keys, values))
+# BI_Average = list(sorted(BI_Average))
+#
+# keys = (CSV[CSV.Index == "NDMI"]["Date"])
+# values = CSV[CSV.Index == "NDMI"]["Average"]
+#
+# NDMI_Average = list(zip(keys, values))
+# NDMI_Average = list(sorted(BI_Average))
+#
+#
+# keys = (CSV[CSV.Index == "NDVI"]["Date"])
+# values = CSV[CSV.Index == "NDVI"]["Average"]
+#
+# NDVI_Average = list(zip(keys, values))
+# NDVI_Average = list(sorted(BI_Average))
+#
+# ####LS marker
+# LS_Date = Event_pointer(BI_Average)
+# BI_ts = CSV[CSV.Index == "NDMI"]
+# BI_ts.sort_values("Date")
+# BI_ts.plot.line(x = "Date", y= "Average")
+# BI_ts = CSV[CSV.Index == "NDVI"]
+# BI_ts.sort_values("Date")
+# BI_ts.plot.line(x = "Date", y= "Average")
+# BI_ts = CSV[CSV.Index == "BI"]
+# BI_ts.sort_values("Date")
+# BI_ts.plot.line(x = "Date", y= "Average")
+#
+# LS = pd.to_datetime(LS_Date)
+#
+# ######Creation of new dataframes
+# CSVF = pd.DataFrame(index=li3,
+#                     columns=["filename", "Index", "Date", "NoDataValue", "Event"])
+# for i in range(0, len(full_images)):
+#     filename = full_images[i]
+#     CSVF.filename[i] = filename
+#     CSVF.Index[i] = Index(filename, "Full")
+#     CSVF.Date[i] = Date(filename, "Full")
+#     CSVF.NoDataValue[i] = No_Data_Value(filename, "Full")
+#
+# CSVF.sort_values("Date")
+#
+# for i in range(0, len(li3)):
+#     Dateformat = (pd.to_datetime(CSVF.Date[i]))
+#     if (Dateformat < LS):
+#         CSVF.Event[i] = "Pre-Event"
+#         ds = gdal.Open(FDataDir + '/' + CSVF.filename[i])
+#         band = ds.GetRasterBand(1)
+#         array = band.ReadAsArray()
+#         array[np.isnan(array)] = 0,
+#         array += array
+#     elif Dateformat == LS:
+#         CSVF.Event[i] = "Event period"
+#     else:
+#         CSVF.Event[i] = "Post-Event"
+#         ds2 = gdal.Open(FDataDir + '/' + CSVF.filename[i])
+#         band2 = ds2.GetRasterBand(1)
+#         post_array = band2.ReadAsArray()
+#         post_array[np.isnan(post_array)] = 0,
+#         post_array += post_array
+#
+# # print(CSVF)
+#
+# print(array)
+# plt.imshow(array)
+# plt.show()
+# print(post_array)
+# plt.imshow(post_array)
+# plt.show()
+#
+# pre_image_BI = array
+# post_image_BI = post_array
+#
+# # Up to here
+#
+# dBI = post_image_BI - pre_image_BI
+# plt.imshow(dBI)
+# plt.show()
+#
+# x=gf.get_geoinfo(FDataDir+'/'+ 'LC08_173060_20190204_BI.tif',subdataset=0)
+# gf.create_geotiff(DataDir+'BI2.tif', dBI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
+
+
+# BI_F =(CSV.[CSV.Index == "BI"]).tolist()
+# NDMI_F =(CSV[CSV.Index == "NDMI"]).tolist()
+# NDVI_F =(CSV[CSV.Index == "NDVI"]).tolist()
+
+
+# # PLotting
+# plt.rcParams["figure.figsize"] = (20,10)
+# plt.figure()
+# plt.plot(Dates, BI_Average)
+# plt.xlabel("Dates")
+# plt.ylabel("Average BI")
+# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/BI_timeseries.jpg', dpi = 600)
+# plt.figure()
+# plt.plot(Dates, NDMI_Average)
+# plt.xlabel("Dates")
+# plt.ylabel("Average NDMI")
+# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDMI_timeseries.jpg', dpi = 600)
+# plt.figure()
+# plt.plot(Dates, NDVI_Average)
+# plt.xlabel("Dates")
+# plt.ylabel("Average NDVI")
+# plt.savefig('/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/NDVI_timeseries.jpg', dpi = 600)
+#
+# #Exporting
+# CSV.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesC.xlsx")
+# CSVF.to_excel("/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/TimeSeriesF.xlsx")
+
 
