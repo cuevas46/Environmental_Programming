@@ -9,27 +9,26 @@ import datetime
 
 CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
 FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
+DataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/'
 
 # Folder path
 dir_path = CDataDir
 dir_pathF = FDataDir
 
 # lists to store files
-res = list()
-resF = list()
+res = []
+resF = []
 
 # Iterate directories
-for item in os.listdir(dir_path):
-    # Accessing item by adding directory path and checking if current item is a file
-    if os.path.isfile(os.path.join(dir_path, item)):
-        res.append(item)
-# print(res)
+for path in os.listdir(dir_path):
+    # check if current path is a file
+    if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_path, path)):
+        res.append(path)
 
-for item in os.listdir(dir_pathF):
-    # Accessing item by adding directory path and checking if current item is a file
-    if os.path.isfile(os.path.join(dir_pathF, item)):
-        resF.append(item)
-# print(resF)
+for path in os.listdir(dir_pathF):
+    # check if current path is a file
+    if str(path).split(".")[-1] == "tif" and os.path.isfile(os.path.join(dir_pathF, path)):
+        resF.append(path)
 
 def Index( filename , datatype ): #You have to select wether the file is clipped or full
     if datatype == "Clipped":
@@ -106,7 +105,7 @@ def Event_pointer(Listname, df):
         Mean_Distance = abs(Listname[i+1] - Listname[i])
         Derivative.append(Mean_Distance)
     index_in_list = max(Derivative)
-    Event = Derivative.index(index_in_list) + 1
+    Event = Derivative.index(index_in_list)+1
     Event_Average = Listname[Event]
     #Date_of_Event = CSV.Date[CSV.Average == Event_Average]
     Index = df[df['Average'] == Event_Average].index.values
@@ -116,13 +115,71 @@ def Event_pointer(Listname, df):
     return Date_of_Event
 
 
-#Teh averga wont work, we neeed to get the index value or date value in another way.
 BI_Average =(CSV.Average[CSV.Index == "BI"]).tolist()
-# NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
-# NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
+NDMI_Average =(CSV.Average[CSV.Index == "NDMI"]).tolist()
+NDVI_Average =(CSV.Average[CSV.Index == "NDVI"]).tolist()
 # Dates =(CSV.Date[0:12]).tolist()
 
-print(Event_pointer(BI_Average, CSV))
+Date_of_LS = Event_pointer(BI_Average, CSV)
+# print(Event_pointer(NDMI_Average, CSV))
+# print(Event_pointer(NDVI_Average, CSV))
+
+def Generate_post_minus_pre_images(filetype):
+    df = pd.DataFrame(columns = ["filename", "Date","Event"])
+    df.filename = CSVF.filename[CSVF.Index == filetype]
+    df.Date = CSVF.Date[CSVF.Index == filetype]
+    df.Event = CSVF.Event[CSVF.Index == filetype]
+    df.reset_index(inplace = True)
+    Index = df[df['Event'] == 'LS'].index.values
+    i=0
+    j=Index[0]
+    if i < Index[0]:
+        ds = gdal.Open(FDataDir+'/'+df.filename[i])
+        band = ds.GetRasterBand(1)
+        array = band.ReadAsArray()
+        array[np.isnan(array)] = 0,
+        array += array
+        i += 1
+    array = array/i
+    k=0
+    if j <= len(df):
+        ds2 = gdal.Open(FDataDir + '/' + df.filename[j])
+        band2 = ds2.GetRasterBand(1)
+        post_array = band2.ReadAsArray()
+        post_array[np.isnan(post_array)] = 0,
+        post_array += post_array
+        j += 1
+        k += 1
+    post_array = post_array/k
+    return post_array, array
+
+
+array = Generate_post_minus_pre_images('BI')[1]
+post_array = Generate_post_minus_pre_images('BI')[0]
+print(array)
+plt.imshow(array)
+plt.show()
+print(post_array)
+plt.imshow(post_array)
+plt.show()
+
+pre_image_BI = array
+post_image_BI = post_array
+
+# Up to here
+
+dBI = post_image_BI - pre_image_BI
+plt.imshow(dBI)
+plt.show()
+
+x=gf.get_geoinfo(FDataDir+'/'+ 'LC08_173060_20190204_BI.tif',subdataset=0)
+gf.create_geotiff(DataDir+'BI2.tif', dBI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
+
+
+# BI_F =(CSV.[CSV.Index == "BI"]).tolist()
+# NDMI_F =(CSV[CSV.Index == "NDMI"]).tolist()
+# NDVI_F =(CSV[CSV.Index == "NDVI"]).tolist()
+
 
 # # PLotting
 # plt.rcParams["figure.figsize"] = (20,10)
