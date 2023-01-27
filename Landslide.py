@@ -6,6 +6,9 @@ import sys
 import os
 import GIS_functions as gf
 import datetime
+from tkinter import filedialog
+from tkinter import *
+from tkinter.filedialog import askdirectory
 
 ##Functions
 
@@ -100,9 +103,10 @@ def Generate_post_minus_pre_images(filetype):
 
 
 #Reading of images
-CDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Clipped_images'
-FDataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/Full_image'
-DataDir = '/Users/cuevas46/Documents/Environmental_Programming/Project/A3_Landslide_detection/Data/'
+FDataDir = askdirectory(title='Select Full Images Folder')
+DataDir = askdirectory(title='Select Folder to Save Processed Data')
+CDataDir = askdirectory(title='Select Clipped Images Folder')
+
 
 clipped_images = []
 full_images = []
@@ -157,12 +161,14 @@ dBI = post_array_BI - pre_array_BI
 dNDMI = post_array_NDMI - pre_array_NDMI
 dNDVI = post_array_NDMI - pre_array_NDVI
 
-x=gf.get_geoinfo(FDataDir+'/'+ 'LC08_173060_20190204_BI.tif',subdataset=0)
-gf.create_geotiff(DataDir+'BI.tif', dBI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
-gf.create_geotiff(DataDir+'NDMI.tif', dNDMI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
-gf.create_geotiff(DataDir+'NDVI.tif', dNDVI, x[0] , x[1] , x[2],x[3], x[4], x[5],compress=None)
+root = Tk()
+root.filename = filedialog.askopenfilename(title = "Select full image for substraction of metadata",filetypes = (("tiff files","*.tif"),("all files","*.*")))
+driver, ndv, xsize, ysize, geot, projection = gf.get_geoinfo(root.filename)
+gf.create_geotiff(DataDir+'BI.tif', dBI, driver, ndv , xsize, ysize, geot, projection, compress=None)
+gf.create_geotiff(DataDir+'NDMI.tif', dNDMI, driver, ndv , xsize, ysize, geot, projection,compress=None)
+gf.create_geotiff(DataDir+'NDVI.tif', dNDVI, driver, ndv , xsize, ysize, geot, projection,compress=None)
 
-# PLotting
+# Plotting
 plt.rcParams["figure.figsize"] = (20,10)
 plt.figure()
 plt.plot(Dates, BI_Average/max(BI_Average),label = 'BI', color = 'green')
